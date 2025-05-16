@@ -1,0 +1,3 @@
+[submodule "foundry-crime-scripts"]
+	path = foundry-crime-scripts
+	url = https://github.com/Psyphon361/foundry-crime-scripts
