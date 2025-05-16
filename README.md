@@ -23,13 +23,7 @@ Before you start, you need to install some tools. Follow the instructions for yo
 Git is used to download the project code from GitHub.
 
 #### Windows
-1. Download the Git installer from [git-scm.com](https://git-scm.com/).
-2. Run the installer and follow the prompts. Use the default settings unless you have a specific reason to change them.
-3. Open a Command Prompt (search for **cmd** in the Start menu) and verify Git is installed:
-   ```bash
-   git --version
-   ```
-   You should see something like `git version 2.XX.X`.
+PLEASE FOLLOW THE LINUX STEPS IN WSL TERMINAL IF `nodejs` AND `npm` are not installed by default.
 
 #### Linux
 1. Open a terminal (Ctrl+Alt+T on Ubuntu).
@@ -198,7 +192,7 @@ Now that you have the tools installed, let’s download the project.
    - Linux/macOS: Open a terminal.
    - Run:
      ```bash
-     git clone --recurse-submodules https://github.com/Psyphon361/mafia-crime-scheduler.git
+     git clone --recurse-submodules https://github.com/Psyphon361/mafia-crime-scheduler
      ```
      - The `--recurse-submodules` flag ensures the `foundry-crime-scripts` submodule is also cloned.
 2. Navigate to the Project Directory:
@@ -257,7 +251,6 @@ You’ll be prompted to enter your private key (without the `0x` prefix) and a p
 ```text
 Enter private key: <your-private-key>
 Enter password: <your-strong-password>
-Confirm password: <your-strong-password>
 ```
 This creates an encrypted keystore file in `~/.foundry/keystores/`.
 
@@ -294,8 +287,8 @@ BNB_KEYSTORE_NAME=<your-bnb-keystore-name>
 PLS_KEYSTORE_PASSWORD=<your-pls-keystore-password>
 BNB_KEYSTORE_PASSWORD=<your-bnb-keystore-password>
 CHAIN_CHOICE=2  # 0 -> PLS, 1 -> BNB, 2 -> BOTH
-PLS_CRIME_TYPE=0  # 0 -> ROB_A_HOT_DOG_VENDOR, 1 -> SHOPLIFT_A_CORNER_STORE, 2 -> MUG_A_TOURIST, 3 -> BREAK_INTO_A_HOUSE, 4 -> STEAL_A_PURSE, 5 -> PICKPOCKET, 6 -> STEAL_A_VEHICLE, 7 -> HOLD_UP_A_STORE, 8 -> BURGLARIZE_A_HOME
-BNB_CRIME_TYPE=0  # 0 -> ROB_A_HOT_DOG_VENDOR, 1 -> SHOPLIFT_A_CORNER_STORE, 2 -> MUG_A_TOURIST, 3 -> BREAK_INTO_A_HOUSE, 4 -> STEAL_A_PURSE, 5 -> PICKPOCKET, 6 -> STEAL_A_VEHICLE, 7 -> HOLD_UP_A_STORE, 8 -> BURGLARIZE_A_HOME
+PLS_CRIME_TYPE=0  # 0 -> ROB_A_HOT_DOG_VENDOR, 1 -> ROB_A_FREIGHT_TRAIN, 2 -> ROB_THE_BANK, 3 -> BRIBE_THE_POLICE_STATION
+BNB_CRIME_TYPE=0  # 0 -> ROB_A_HOT_DOG_VENDOR, 1 -> ROB_A_FREIGHT_TRAIN, 2 -> ROB_THE_BANK, 3 -> BRIBE_THE_POLICE_STATION
 ```
 
 ### Explanation:
@@ -307,28 +300,18 @@ BNB_CRIME_TYPE=0  # 0 -> ROB_A_HOT_DOG_VENDOR, 1 -> SHOPLIFT_A_CORNER_STORE, 2 -
 - `BNB_KEYSTORE_PASSWORD`: The password you set for your BNB Chain keystore.
 - `CHAIN_CHOICE`: Choose which chain(s) to run:
   - `0`: PulseChain only
-  - `1`: BNB Chain only
+  - `1`: BNBChain only
   - `2`: Both chains
 - `PLS_CRIME_TYPE`: The type of crime to commit on PulseChain (default is `0` for `ROB_A_HOT_DOG_VENDOR`):
   - `0`: `ROB_A_HOT_DOG_VENDOR`
-  - `1`: `SHOPLIFT_A_CORNER_STORE`
-  - `2`: `MUG_A_TOURIST`
-  - `3`: `BREAK_INTO_A_HOUSE`
-  - `4`: `STEAL_A_PURSE`
-  - `5`: `PICKPOCKET`
-  - `6`: `STEAL_A_VEHICLE`
-  - `7`: `HOLD_UP_A_STORE`
-  - `8`: `BURGLARIZE_A_HOME`
+  - `1`: `ROB_A_FREIGHT_TRAIN`
+  - `2`: `ROB_THE_BANK`
+  - `3`: `BRIBE_THE_POLICE_STATION`
 - `BNB_CRIME_TYPE`: The type of crime to commit on BNB Chain (default is `0` for `ROB_A_HOT_DOG_VENDOR`):
   - `0`: `ROB_A_HOT_DOG_VENDOR`
-  - `1`: `SHOPLIFT_A_CORNER_STORE`
-  - `2`: `MUG_A_TOURIST`
-  - `3`: `BREAK_INTO_A_HOUSE`
-  - `4`: `STEAL_A_PURSE`
-  - `5`: `PICKPOCKET`
-  - `6`: `STEAL_A_VEHICLE`
-  - `7`: `HOLD_UP_A_STORE`
-  - `8`: `BURGLARIZE_A_HOME`
+  - `1`: `ROB_A_FREIGHT_TRAIN`
+  - `2`: `ROB_THE_BANK`
+  - `3`: `BRIBE_THE_POLICE_STATION`
 
 ## 📤 Using Multiple Wallets
 
@@ -366,7 +349,7 @@ Now you’re ready to run the scheduler!
 
 Run the script to ensure everything works:
 ```bash
-node scheduler.js
+node run-crime-scriptV1.js
 ```
 
 You should see logs like:
@@ -383,7 +366,7 @@ BNB next run for LAURENTIS scheduled for 2025-05-16T14:46:00.000Z (in 16 minutes
 
 Start the script with pm2:
 ```bash
-pm2 start scheduler.js
+pm2 start run-crime-scriptV1.js
 ```
 
 Save the pm2 process to ensure it runs on system startup:
@@ -393,14 +376,14 @@ pm2 save
 
 View the logs to confirm it’s running:
 ```bash
-pm2 logs scheduler
+pm2 logs run-crime-scriptV1
 ```
 
 ### 3️⃣ Updating Configuration
 
 If you change the `.env` file (e.g., switch `CHAIN_CHOICE`), restart the pm2 process to apply the changes:
 ```bash
-pm2 restart scheduler
+pm2 restart run-crime-scriptV1
 ```
 
 ### 4️⃣ Updating the Submodule
@@ -414,7 +397,7 @@ git submodule update --init --recursive
 ```
 Then restart the pm2 process:
 ```bash
-pm2 restart scheduler
+pm2 restart run-crime-scriptV1
 ```
 
 ---
@@ -442,7 +425,7 @@ Security is critical when dealing with private keys and blockchain transactions.
 ### 3️⃣ General Security Tips
 - **Keep Your System Secure:** Ensure your computer is protected with antivirus software and a firewall.
 - **Use a Dedicated Account:** Consider using a separate wallet with a small amount of funds for this project, rather than your main wallet.
-- **Monitor Logs:** Regularly check `pm2 logs scheduler` for errors or unexpected behavior.
+- **Monitor Logs:** Regularly check `pm2 logs run-crime-scriptV1` for errors or unexpected behavior.
 - **Update Dependencies:** Keep Node.js, Foundry, and pm2 up to date to avoid security vulnerabilities:
   ```bash
   npm install -g npm
@@ -471,7 +454,7 @@ Security is critical when dealing with private keys and blockchain transactions.
   ```
 - View logs:
   ```bash
-  pm2 logs scheduler
+  pm2 logs run-crime-scriptV1
   ```
 
 ### Submodule Not Found:
@@ -484,7 +467,7 @@ Security is critical when dealing with private keys and blockchain transactions.
 
 ## 🎉 Congratulations!
 
-You’ve successfully set up the Mafia Crime Scheduler! Your script will now run every 16 minutes, automating your DeFi game on PulseChain, BNB Chain, or both. If you have any questions or run into issues, feel free to reach out. Happy automating! 🚀
+You’ve successfully set up the Mafia Crime Scheduler! Your script will now run every 16 minutes, automating your DeFi game on PulseChain, BNB Chain, or both. If you have any questions or run into issues, feel free to reach out on Telegram. Happy automating! 🚀
 
 ---
 
@@ -497,6 +480,8 @@ This is an open-source project licensed under the **MIT License**.
 Please note that **I am not responsible for any financial losses, damages, or issues that may arise from using this code**. This is a decentralized finance (DeFi) project, and by using it, you acknowledge that you are solely responsible for the code you decide to run on your machine. **Exercise caution and always do your own research (DYOR)**.
 
 ### Support This Project
-If you found this project helpful and would like to support its development, you can donate to the following address:
+Creating, testing, updating, and maintaining projects like this takes a significant amount of time and effort. I’m passionate about building tools that help the DeFi community, but it’s a labor of love that often comes with late nights and constant improvements to ensure everything runs smoothly for you. 💻
+
+If this project has saved you time, helped you automate your DeFi game, or brought value to your experience, please consider supporting its ongoing development with a small donation. Every contribution, no matter the size, helps me dedicate more time to improving this project and creating new ones for the community. Your support means the world to me! 🌟
 
 **Donation Address:** `0x44782f177962D7bb766B4853d3428A7b44802aA2`
