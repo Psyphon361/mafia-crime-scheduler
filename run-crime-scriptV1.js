@@ -5,19 +5,42 @@ require("dotenv").config();
 // Promisify exec for async/await
 const execPromise = util.promisify(exec);
 
-// Validate input
-const plsKeystoreNames = process.env.PLS_KEYSTORE_NAME ? process.env.PLS_KEYSTORE_NAME.split(",").map((name) => name.trim()) : [];
-const bnbKeystoreNames = process.env.BNB_KEYSTORE_NAME ? process.env.BNB_KEYSTORE_NAME.split(",").map((name) => name.trim()) : [];
-const plsKeystorePasswords = process.env.PLS_KEYSTORE_PASSWORD ? process.env.PLS_KEYSTORE_PASSWORD.split(",").map((pw) => pw.trim()) : [];
-const bnbKeystorePasswords = process.env.BNB_KEYSTORE_PASSWORD ? process.env.BNB_KEYSTORE_PASSWORD.split(",").map((pw) => pw.trim()) : [];
+// Chain choice: 0 -> PLS, 1 -> BNB, 2 -> BOTH
+const CHAIN_CHOICE = parseInt(process.env.CHAIN_CHOICE);
 
-if (plsKeystoreNames.length === 0 || bnbKeystoreNames.length === 0) {
-  console.error("Error: At least one keystore name must be provided for each chain.");
+// Validate CHAIN_CHOICE
+if (![0, 1, 2].includes(CHAIN_CHOICE)) {
+  console.error("Error: CHAIN_CHOICE must be 0 (PLS), 1 (BNB), or 2 (BOTH).");
   process.exit(1);
 }
-if (plsKeystoreNames.length !== plsKeystorePasswords.length || bnbKeystoreNames.length !== bnbKeystorePasswords.length) {
-  console.error("Error: Number of keystore names must match number of passwords for each chain.");
-  process.exit(1);
+
+// Read keystore names and passwords based on CHAIN_CHOICE
+const plsKeystoreNames = CHAIN_CHOICE === 0 || CHAIN_CHOICE === 2 ? (process.env.PLS_KEYSTORE_NAME ? process.env.PLS_KEYSTORE_NAME.split(",").map((name) => name.trim()) : []) : [];
+const bnbKeystoreNames = CHAIN_CHOICE === 1 || CHAIN_CHOICE === 2 ? (process.env.BNB_KEYSTORE_NAME ? process.env.BNB_KEYSTORE_NAME.split(",").map((name) => name.trim()) : []) : [];
+const plsKeystorePasswords = CHAIN_CHOICE === 0 || CHAIN_CHOICE === 2 ? (process.env.PLS_KEYSTORE_PASSWORD ? process.env.PLS_KEYSTORE_PASSWORD.split(",").map((pw) => pw.trim()) : []) : [];
+const bnbKeystorePasswords = CHAIN_CHOICE === 1 || CHAIN_CHOICE === 2 ? (process.env.BNB_KEYSTORE_PASSWORD ? process.env.BNB_KEYSTORE_PASSWORD.split(",").map((pw) => pw.trim()) : []) : [];
+
+// Validate input based on CHAIN_CHOICE
+if (CHAIN_CHOICE === 0 || CHAIN_CHOICE === 2) {
+  if (plsKeystoreNames.length === 0) {
+    console.error("Error: At least one PLS keystore name must be provided when CHAIN_CHOICE is 0 or 2.");
+    process.exit(1);
+  }
+  if (plsKeystoreNames.length !== plsKeystorePasswords.length) {
+    console.error("Error: Number of PLS keystore names must match number of PLS passwords.");
+    process.exit(1);
+  }
+}
+
+if (CHAIN_CHOICE === 1 || CHAIN_CHOICE === 2) {
+  if (bnbKeystoreNames.length === 0) {
+    console.error("Error: At least one BNB keystore name must be provided when CHAIN_CHOICE is 1 or 2.");
+    process.exit(1);
+  }
+  if (bnbKeystoreNames.length !== bnbKeystorePasswords.length) {
+    console.error("Error: Number of BNB keystore names must match number of BNB passwords.");
+    process.exit(1);
+  }
 }
 
 // Chain configurations
@@ -27,19 +50,16 @@ const chains = {
     script: "script/BNBCrime.s.sol:BNBCrime",
     keystoreNames: bnbKeystoreNames,
     keystorePasswords: bnbKeystorePasswords,
-    crimeType: parseInt(process.env.BNB_CRIME_TYPE) || 0, // Default to 0 (ROB_A_HOT_DOG_VENDOR)
+    crimeType: parseInt(process.env.BNB_CRIME_TYPE)
   },
   PLS: {
     rpcUrl: process.env.PLS_RPC_URL || "https://rpc-pulsechain.g4mm4.io",
     script: "script/PLSCrime.s.sol:PLSCrime",
     keystoreNames: plsKeystoreNames,
     keystorePasswords: plsKeystorePasswords,
-    crimeType: parseInt(process.env.PLS_CRIME_TYPE) || 0, // Default to 0 (ROB_A_HOT_DOG_VENDOR)
+    crimeType: parseInt(process.env.PLS_CRIME_TYPE)
   },
 };
-
-// Chain choice: 0 -> PLS, 1 -> BNB, 2 -> BOTH
-const CHAIN_CHOICE = parseInt(process.env.CHAIN_CHOICE);
 
 // Function to run makeCrime for a single wallet
 async function runMakeCrime(chainName, keystoreName, keystorePassword, crimeType) {
@@ -84,8 +104,6 @@ function startChainScheduling(chainName) {
 // Main function to start scheduling based on CHAIN_CHOICE
 function startScheduler() {
   console.log(`Starting scheduler at ${new Date().toISOString()}`);
-
-  console.log(CHAIN_CHOICE);
 
   if (CHAIN_CHOICE === 0 || CHAIN_CHOICE === 2) {
     startChainScheduling("PLS");
