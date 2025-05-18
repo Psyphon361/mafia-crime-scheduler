@@ -39,7 +39,7 @@ const chains = {
 };
 
 // Chain choice: 0 -> PLS, 1 -> BNB, 2 -> BOTH
-const CHAIN_CHOICE = parseInt(process.env.CHAIN_CHOICE) || 2;
+const CHAIN_CHOICE = parseInt(process.env.CHAIN_CHOICE);
 
 // Function to run makeCrime for a single wallet
 async function runMakeCrime(chainName, keystoreName, keystorePassword, crimeType) {
@@ -84,6 +84,8 @@ function startChainScheduling(chainName) {
 // Main function to start scheduling based on CHAIN_CHOICE
 function startScheduler() {
   console.log(`Starting scheduler at ${new Date().toISOString()}`);
+
+  console.log(CHAIN_CHOICE);
 
   if (CHAIN_CHOICE === 0 || CHAIN_CHOICE === 2) {
     startChainScheduling("PLS");
