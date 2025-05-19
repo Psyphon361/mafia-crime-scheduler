@@ -23,7 +23,7 @@ Before you start, you need to install some tools. Follow the instructions for yo
 Git is used to download the project code from GitHub.
 
 #### Windows
-PLEASE FOLLOW THE LINUX STEPS IN WSL TERMINAL IF `nodejs` AND `npm` are not installed by default.
+Follow Linux steps on WSL if not installed by default (WSL install guide in Section #3)
 
 #### Linux
 1. Open a terminal (Ctrl+Alt+T on Ubuntu).
@@ -61,14 +61,7 @@ If Homebrew is not already installed on your macOS, you can install it by runnin
 Node.js is used to run the scheduler script.
 
 #### Windows
-1. Download the Node.js installer from [nodejs.org](https://nodejs.org). Choose the "LTS" version.
-2. Run the installer and follow the prompts. Make sure to check the box to install npm (Node Package Manager).
-3. Open a Command Prompt and verify Node.js and npm are installed:
-   ```bash
-   node -v
-   npm -v
-   ```
-   You should see versions like `v20.X.X` for Node.js and `10.X.X` for npm.
+Follow Linux steps on WSL if not installed by default (WSL install guide in Section #3)
 
 #### Linux
 1. Open a terminal.
